@@ -33,26 +33,6 @@ const ProfileForm: React.FC = () => {
 
   const { user } = useFamily();
 
-  useEffect(() => {
-    setLoading(true);
-    if (user) {
-      const loadUserData = async () => {
-        const userRef = doc(db, "users", user.uid);
-        const userSnap = await getDoc(userRef);
-
-        if (userSnap.exists()) {
-          const userData = userSnap.data();
-          reset(userData);
-          setValue("email", user.email);
-          setProfileImageUrl(userData.profileImageUrl || "");
-          setCoverImageUrl(userData.coverImageUrl || "");
-          setLoading(false);
-        }
-      };
-      loadUserData();
-    }
-  }, [reset, user]);
-
   const handleImageChange = (
     e: React.ChangeEvent<HTMLInputElement>,
     setImage: React.Dispatch<React.SetStateAction<File | null>>,
@@ -100,7 +80,7 @@ const ProfileForm: React.FC = () => {
 
       await setDoc(doc(db, "users", user.uid), {
         ...data,
-        email: user.email, 
+        email: user.email,
         profileImageUrl: profileImageUrlUpload,
         coverImageUrl: coverImageUrlUpload,
       });
@@ -111,6 +91,26 @@ const ProfileForm: React.FC = () => {
       toast.error("Failed to save profile. Please try again.");
     }
   };
+
+  useEffect(() => {
+    setLoading(true);
+    if (user) {
+      const loadUserData = async () => {
+        const userRef = doc(db, "users", user.uid);
+        const userSnap = await getDoc(userRef);
+
+        if (userSnap.exists()) {
+          const userData = userSnap.data();
+          reset(userData);
+          setValue("email", user.email);
+          setProfileImageUrl(userData.profileImageUrl || "");
+          setCoverImageUrl(userData.coverImageUrl || "");
+          setLoading(false);
+        }
+      };
+      loadUserData();
+    }
+  }, [reset, user]);
 
   return (
     <div className="space-y-10 divide-y divide-gray-900/10">
