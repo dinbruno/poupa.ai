@@ -80,14 +80,14 @@ const ProfileForm: React.FC = () => {
       return downloadUrl;
     } catch (error) {
       console.error("Error uploading file:", error);
-      throw new Error("Failed to upload file."); // Lançando erro para ser capturado mais tarde
+      throw new Error("Failed to upload file.");
     }
   };
 
   const onSubmit = async (data: any) => {
     if (!user) {
       toast.error("User not authenticated.");
-      return; // Parar execução se não houver usuário autenticado
+      return;
     }
 
     try {
@@ -100,7 +100,7 @@ const ProfileForm: React.FC = () => {
 
       await setDoc(doc(db, "users", user.uid), {
         ...data,
-        email: user.email, // Supondo que email é estático ou controlado em outro lugar
+        email: user.email, 
         profileImageUrl: profileImageUrlUpload,
         coverImageUrl: coverImageUrlUpload,
       });
