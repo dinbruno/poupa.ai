@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { registerUser } from '../../services/firebaseService';
+import "../../app/globals.css";
 
 const SignupPage: React.FC = () => {
   const [email, setEmail] = useState('');

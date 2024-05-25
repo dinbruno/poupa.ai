@@ -6,6 +6,7 @@ import React, { useState } from "react";
 import logo from "@/assets/png/logo.png";
 import { Toaster, toast } from "sonner";
 import { useRouter } from "next/navigation";
+import "../../../app/globals.css";
 
 const LoginComponent: React.FC = () => {
   const [email, setEmail] = useState("");
