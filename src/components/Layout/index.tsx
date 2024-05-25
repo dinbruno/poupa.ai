@@ -232,7 +232,7 @@ export default function AdminLayout({
                           className={classNames(
                             item.current
                               ? "bg-gray-50 text-indigo-600"
-                              : "text-gray-700 hover:text-indigo-600 hover:bg-gray-50",
+                              : "text-gray-700 hover:text-indigo-600  hover:bg-primary",
                             "group flex gap-x-3 rounded-md p-2 text-sm leading-6 font-semibold w-full justify-center"
                           )}
                         >
@@ -241,7 +241,7 @@ export default function AdminLayout({
                               className={classNames(
                                 item.current
                                   ? "text-indigo-600"
-                                  : "text-gray-400 group-hover:text-indigo-600",
+                                  : "text-gray-400 group-hover:text-white",
                                 "h-6 w-6 shrink-0"
                               )}
                               aria-hidden="true"
@@ -348,7 +348,7 @@ export default function AdminLayout({
                         className="ml-4 text-sm font-semibold leading-6 text-gray-900"
                         aria-hidden="true"
                       >
-                        Tom Cook
+                        {user?.firstName || user?.email.split("@")[0]}
                       </span>
                       <ChevronDownIcon
                         className="ml-2 h-5 w-5 text-gray-400"

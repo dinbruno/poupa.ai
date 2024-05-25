@@ -5,7 +5,14 @@ import {
   signInWithEmailAndPassword,
   signOut,
 } from "firebase/auth";
-import { arrayUnion, doc, setDoc, updateDoc } from "firebase/firestore";
+import {
+  addDoc,
+  arrayUnion,
+  collection,
+  doc,
+  setDoc,
+  updateDoc,
+} from "firebase/firestore";
 
 // Registra um novo usuário
 export const registerUser = async (
@@ -13,32 +20,27 @@ export const registerUser = async (
   password: string,
   familyName: string
 ) => {
+  // Criar usuário com autenticação
   const userCredential = await createUserWithEmailAndPassword(
     auth,
     email,
     password
   );
   const user = userCredential.user;
-  const familyId = user.uid;
 
-  const familyData = {
+  const familyDocRef = await addDoc(collection(db, "families"), {
     name: familyName,
     admin: user.uid,
     members: [user.uid],
-  };
+  });
 
   const userData = {
     email: email,
     uid: user.uid,
-    familyId: familyId,
-  } as any
+    familyId: familyDocRef.id,
+    familyName: familyName,
+  };
 
-  if (familyName) {
-    const familyDocRef = doc(db, "families", familyId);
-    await setDoc(familyDocRef, familyData);
-
-    userData.familyName = familyName; 
-  }
 
   const userDocRef = doc(db, "users", user.uid);
   await setDoc(userDocRef, userData);
@@ -55,7 +57,6 @@ export const loginUser = async (email: string, password: string) => {
   return userCredential.user;
 };
 
-// Desloga o usuário
 export const logoutUser = async () => {
   await signOut(auth);
 };
@@ -88,9 +89,17 @@ export const inviteUserToFamily = async (familyId: string, email: string) => {
       members: arrayUnion(userId),
     });
 
+    // Adiciona o usuário na coleção de usuários com referência à família
+    const userDocRef = doc(db, "users", userId);
+    await setDoc(userDocRef, {
+      email: email,
+      familyId: familyId,
+    });
+
     // Enviar e-mail para reset de senha
     sendPasswordResetEmail(auth, email);
   } catch (error) {
     console.error("Erro ao criar usuário:", error);
+    throw new Error("Falha ao convidar usuário para a família.");
   }
 };

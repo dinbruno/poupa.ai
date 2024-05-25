@@ -21,7 +21,7 @@ interface UserData {
   name: string;
   uid: string;
   profileImageUrl?: string;
-  familyId?: string;
+  familyId: string;
   coverImageUrl?: string;
   firstName: string;
   lastName: string;
@@ -33,7 +33,7 @@ interface UserData {
 interface FamilyContextType {
   familyData: FamilyData;
   isLoading: boolean;
-  user: UserData | null;
+  user: UserData;
   updateFamilyData: (data: FamilyData) => Promise<void>;
 }
 
@@ -48,7 +48,17 @@ export const FamilyProvider: React.FC<{ children: ReactNode }> = ({
     admin: "",
   });
   const [isLoading, setLoading] = useState(true);
-  const [user, setUser] = useState<UserData | null>(null);
+  const [user, setUser] = useState<UserData>({
+    email: "",
+    name: "",
+    uid: "",
+    region: "",
+    city: "",
+    firstName: "",
+    lastName: "",
+    streetAddress: "",
+    familyId: "",
+  });
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
@@ -59,7 +69,17 @@ export const FamilyProvider: React.FC<{ children: ReactNode }> = ({
         setUser(userData);
         setFamilyData(familyData);
       } else {
-        setUser(null);
+        setUser({
+          email: "",
+          name: "",
+          uid: "",
+          region: "",
+          city: "",
+          firstName: "",
+          lastName: "",
+          streetAddress: "",
+          familyId: "",
+        });
         setFamilyData({ familyId: "", members: [], admin: "" });
       }
       setLoading(false);
@@ -75,6 +95,7 @@ export const FamilyProvider: React.FC<{ children: ReactNode }> = ({
       return docSnap.data() as UserData;
     }
     return {
+      familyId: "",
       email: "",
       name: "",
       uid: "",
