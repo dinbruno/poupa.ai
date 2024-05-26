@@ -69,7 +69,6 @@ export default function FinancasComponent() {
         new Date(new Date().getFullYear(), selectedMonth, 1),
         new Date(new Date().getFullYear(), selectedMonth + 1, 0, 23, 59, 59)
       );
-      console.log(financesData);
       setFinances(financesData);
       setTotalPages(Math.ceil(financesData.length / ITEMS_PER_PAGE));
     } catch (error) {
@@ -86,7 +85,11 @@ export default function FinancasComponent() {
 
   const { requestConfirmation, modal } = useConfirmationModal();
 
-  const confirmDeletion = (title: string, id: string, internalName?: string) => {
+  const confirmDeletion = (
+    title: string,
+    id: string,
+    internalName?: string
+  ) => {
     requestConfirmation(
       `Tem certeza que deseja excluir o campo ${title}? Esta ação é irreversível e pode ocasionar em perda de dados.`,
       () => deleteFinance(id),
@@ -97,7 +100,7 @@ export default function FinancasComponent() {
   const income = finances.reduce((acc, curr) => {
     if (curr.type === "Entrada") {
       const value = parseFloat(curr.value);
-      return acc + (isNaN(value) ? 0 : value); 
+      return acc + (isNaN(value) ? 0 : value);
     }
     return acc;
   }, 0);
@@ -112,6 +115,25 @@ export default function FinancasComponent() {
 
   const balance = income - expenses;
 
+  const deleteItem = async (id: string, title: string) => {
+    try {
+      await deleteFinance(id);
+      await getAllFinances();
+      toast.success(`Campo ${title} excluído com sucesso!`, {
+        position: "top-right",
+        style: {
+          width: "400px",
+          accentColor: "#333",
+          backgroundColor: "#f4f4f4",
+          color: "#333",
+        },
+      });
+    } catch (error) {
+      console.error("Erro ao excluir campo:", error);
+      toast.error("Erro ao excluir campo");
+    }
+  };
+
   useEffect(() => {
     getAllFinances();
   }, []);
@@ -122,7 +144,7 @@ export default function FinancasComponent() {
 
   return (
     <div className="">
-      <Modal open={open} setOpen={setOpen} >
+      <Modal open={open} setOpen={setOpen}>
         <FinanceForm
           financeId={editingFinanceId}
           selectedMonth={selectedMonth}
@@ -313,7 +335,9 @@ export default function FinancasComponent() {
                               </button>
                               <button
                                 className="text-red-500 hover:text-red-700"
-                                onClick={() => confirmDeletion(finance.name, finance.id)}
+                                onClick={() =>
+                                  deleteItem(finance.id, finance.name)
+                                }
                               >
                                 <TrashIcon
                                   className="h-5 w-5"

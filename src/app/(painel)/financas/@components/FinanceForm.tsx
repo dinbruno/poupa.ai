@@ -45,8 +45,10 @@ const FinanceForm = ({
     handleSubmit,
     formState: { errors },
     reset,
+    getValues,
     register,
     setValue,
+    watch,
   } = useForm({
     resolver: yupResolver(schema),
     defaultValues: {
@@ -59,11 +61,12 @@ const FinanceForm = ({
     },
   });
 
+  const type = watch("type");
+
   const onSubmit = async (data: any) => {
     if (financeId) {
       await updateFinance(financeId, data);
     } else {
-      console.log(data, "data")
       await addFinance(data, user.uid);
     }
     await getAllFinances();
@@ -234,11 +237,13 @@ const FinanceForm = ({
                 />
               </div>
               <div className="ml-3 text-sm leading-6">
-                <label htmlFor="comments" className="font-medium text-gray-900">
-                  Despesa fixa
+                <label htmlFor={name} className="font-medium text-gray-900">
+                  {type === "Entrada" ? "Entrada Fixa" : "Despesa Fixa"}
                 </label>
-                <p id="comments-description" className="text-gray-500">
-                  Marque se a despesa for fixa
+                <p id={`${name}-description`} className="text-gray-500">
+                  {type === "Entrada"
+                    ? "Marque se a entrada for fixa"
+                    : "Marque se a despesa for fixa"}
                 </p>
               </div>
             </div>

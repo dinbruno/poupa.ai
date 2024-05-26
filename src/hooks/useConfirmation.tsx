@@ -5,9 +5,9 @@ import React from "react";
 function useConfirmationModal() {
   const [isOpen, setIsOpen] = useState(false);
   const [message, setMessage] = useState("");
-  const [onConfirm, setOnConfirm] = useState(() => () => {});
-  const [onCancel, setOnCancel] = useState(() => () => {});
-
+  const [onConfirm, setOnConfirm] = useState<() => void>(() => {});
+  const [onCancel, setOnCancel] = useState<() => void>(() => {});
+  
   const requestConfirmation = useCallback(
     (
       message: string,
@@ -16,7 +16,6 @@ function useConfirmationModal() {
     ) => {
       setMessage(message);
       setOnConfirm(() => () => {
-        console.log("confirmado")
         confirmCallback();
         setIsOpen(false);
       });
