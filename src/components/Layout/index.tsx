@@ -354,7 +354,7 @@ export default function AdminLayout({
           </div>
 
           <main className="py-2">
-            <div className="px-4 sm:px-6 lg:px-8">{children}</div>
+            <div className="px-2 sm:px-6 lg:px-8">{children}</div>
           </main>
         </div>
       </div>
