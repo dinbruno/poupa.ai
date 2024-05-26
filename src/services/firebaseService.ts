@@ -13,8 +13,12 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
+  orderBy,
   query,
+  serverTimestamp,
   setDoc,
+  startAfter,
   updateDoc,
   where,
 } from "firebase/firestore";
@@ -37,6 +41,8 @@ export const registerUser = async (
     name: familyName,
     admin: user.uid,
     members: [user.uid],
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
   });
 
   const userData = {
@@ -44,6 +50,8 @@ export const registerUser = async (
     uid: user.uid,
     familyId: familyDocRef.id,
     familyName: familyName,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
   };
 
   const userDocRef = doc(db, "users", user.uid);
@@ -76,9 +84,8 @@ function generatePassword() {
   return password;
 }
 
-// Adiciona um usuário e envia convite para redefinir senha
 export const inviteUserToFamily = async (familyId: string, email: string) => {
-  const password = generatePassword(); // Gerar uma senha aleatória
+  const password = generatePassword(); 
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -87,20 +94,20 @@ export const inviteUserToFamily = async (familyId: string, email: string) => {
     );
     const userId = userCredential.user.uid;
 
-    // Adiciona o usuário na coleção da família
     const familyDocRef = doc(db, "families", familyId);
     await updateDoc(familyDocRef, {
       members: arrayUnion(userId),
+      updatedAt: serverTimestamp(),
     });
 
-    // Adiciona o usuário na coleção de usuários com referência à família
     const userDocRef = doc(db, "users", userId);
     await setDoc(userDocRef, {
       email: email,
       familyId: familyId,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp(),
     });
 
-    // Enviar e-mail para reset de senha
     sendPasswordResetEmail(auth, email);
   } catch (error) {
     console.error("Erro ao criar usuário:", error);
@@ -110,15 +117,33 @@ export const inviteUserToFamily = async (familyId: string, email: string) => {
 
 export const addFinance = async (financeData: any, userId: string) => {
   const financeCollectionRef = collection(db, "finances");
-  return addDoc(financeCollectionRef, {
+
+  const docRef = await addDoc(financeCollectionRef, {
     ...financeData,
     userId: userId,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
   });
+
+  await updateDoc(doc(db, "finances", docRef.id), {
+    id: docRef.id
+  });
+
+  return {
+    id: docRef.id,
+    ...financeData,
+    userId,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  };
 };
 
 export const updateFinance = (id: string, financeData: any) => {
   const financeDoc = doc(db, "finances", id);
-  return updateDoc(financeDoc, financeData);
+  return updateDoc(financeDoc, {
+    ...financeData,
+    updatedAt: serverTimestamp(), // Atualiza a data de modificação
+  });
 };
 
 export const deleteFinance = (id: string) => {
@@ -172,4 +197,111 @@ export const getFinanceById = async (financeId: string) => {
     console.error("Erro ao buscar finança:", error);
     throw error;
   }
+};
+
+export const getFinancesPage = async (
+  userId: string,
+  page: number,
+  itemsPerPage: number,
+  lastDocSnapshot = null
+) => {
+  const financeCollectionRef = collection(db, "finances");
+  let q = query(
+    financeCollectionRef,
+    where("userId", "==", userId),
+    orderBy("createdAt"),
+    limit(itemsPerPage)
+  );
+
+  if (page > 1 && lastDocSnapshot) {
+    q = query(q, startAfter(lastDocSnapshot));
+  }
+
+  const querySnapshot = await getDocs(q);
+
+  const finances: any[] = [];
+  let lastVisible = null;
+  querySnapshot.forEach((doc) => {
+    finances.push({
+      id: doc.id,
+      ...doc.data(),
+    });
+  });
+
+  if (!querySnapshot.empty) {
+    lastVisible = querySnapshot.docs[querySnapshot.docs.length - 1];
+  }
+
+  console.log(finances);
+
+  // Você também pode querer retornar o total de finanças para calcular o número total de páginas
+  const totalCountRef = await getDocs(
+    query(financeCollectionRef, where("userId", "==", userId))
+  );
+  const totalItems = totalCountRef.docs.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  return {
+    finances,
+    totalPages,
+    totalItems,
+    lastDocSnapshot: lastVisible,
+  };
+};
+
+export const getFinancesByUserWithDataFilter = async (
+  userId: string,
+  month: any
+) => {
+  const startOfMonth = new Date(new Date().getFullYear(), month, 1);
+  const endOfMonth = new Date(
+    new Date().getFullYear(),
+    month + 1,
+    0,
+    23,
+    59,
+    59
+  );
+
+  const q = query(
+    collection(db, "finances"),
+    where("userId", "==", userId),
+    where("createdAt", ">=", startOfMonth),
+    where("createdAt", "<=", endOfMonth),
+    where("isFixedExpense", "==", true)
+  );
+
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    ...doc.data(),
+  }));
+};
+
+export const getFinancesByUserWithFilter = async (
+  userId: string,
+  start: Date,
+  end: Date
+) => {
+  const financeCollectionRef = collection(db, "finances");
+  const q1 = query(
+    financeCollectionRef,
+    where("userId", "==", userId),
+    where("createdAt", ">=", start),
+    where("createdAt", "<=", end)
+  );
+
+  const q2 = query(
+    financeCollectionRef,
+    where("userId", "==", userId),
+    where("isFixedExpense", "==", true)
+  );
+
+  const [snapshot1, snapshot2] = await Promise.all([getDocs(q1), getDocs(q2)]);
+  const finances = new Map();
+
+  snapshot1.docs.forEach((doc) => finances.set(doc.id, doc.data()));
+  snapshot2.docs.forEach((doc) => finances.set(doc.id, doc.data()));
+
+  return Array.from(finances.values());
 };

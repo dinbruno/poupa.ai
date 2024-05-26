@@ -7,10 +7,14 @@ import logo from "@/assets/png/logo.png";
 import { Toaster, toast } from "sonner";
 import { useRouter } from "next/navigation";
 import "../../../app/globals.css";
+import Link from "next/link";
+import { handleFirebaseError } from "@/app/utils/functions";
+import { ArrowLeftCircleIcon } from "@heroicons/react/24/outline";
 
 const LoginComponent: React.FC = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   const router = useRouter();
 
@@ -24,8 +28,9 @@ const LoginComponent: React.FC = () => {
       setTimeout(() => {
         router.push("/");
       }, 1000);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Erro no login:", error);
+      setError(handleFirebaseError(error.code));
     }
   };
 
@@ -45,7 +50,14 @@ const LoginComponent: React.FC = () => {
         </h2>
       </div>
 
+
+
       <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-[480px]">
+        {error && (
+          <div className="my-4 p-2 bg-red-100 text-red-600 rounded-xl">
+            {error}
+          </div>
+        )}
         <div className="bg-white px-6 py-12 shadow sm:rounded-lg sm:px-12">
           <div>
             <label
@@ -106,12 +118,12 @@ const LoginComponent: React.FC = () => {
             </div>
 
             <div className="text-sm leading-6">
-              <a
-                href="#"
+              <Link
+                href="/esqueci-minha-senha"
                 className="font-semibold text-primary hover:text-indigo-500"
               >
-                Forgot password?
-              </a>
+                Esqueceu sua senha?
+              </Link>
             </div>
           </div>
 

@@ -24,8 +24,6 @@ export default function TabPanel() {
   const router = useRouter();
   const params = usePathname();
 
-  console.log(params, "aqui");
-
   const [currentTab, setCurrentTab] = useState("");
 
   // Atualiza o tab atual com base na rota

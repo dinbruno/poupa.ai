@@ -12,6 +12,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import InputComponent from "@/components/Input/InputComponent";
 import { NumericFormat } from "react-number-format";
+import { toast } from "sonner";
 
 const schema = yup
   .object({
@@ -27,7 +28,17 @@ const schema = yup
   })
   .required();
 
-const FinanceForm = ({ financeId = "" }: { financeId?: string }) => {
+const FinanceForm = ({
+  financeId = "",
+  selectedMonth,
+  handleModal,
+  getAllFinances,
+}: {
+  financeId?: string;
+  selectedMonth: any;
+  handleModal: (value: string) => void;
+  getAllFinances: () => void;
+}) => {
   const { user } = useFamily();
   const {
     control,
@@ -49,13 +60,23 @@ const FinanceForm = ({ financeId = "" }: { financeId?: string }) => {
   });
 
   const onSubmit = async (data: any) => {
-    console.log(data, "data");
     if (financeId) {
       await updateFinance(financeId, data);
     } else {
+      console.log(data, "data")
       await addFinance(data, user.uid);
     }
-    alert("Operação financeira salva!");
+    await getAllFinances();
+    handleModal("");
+    toast.success("Operação financeira salva com sucesso!", {
+      position: "top-right",
+      style: {
+        width: "400px",
+        accentColor: "#333",
+        backgroundColor: "#f4f4f4",
+        color: "#333",
+      },
+    });
   };
 
   useEffect(() => {
@@ -100,8 +121,8 @@ const FinanceForm = ({ financeId = "" }: { financeId?: string }) => {
                 onBlur={onBlur}
                 className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
               >
-                <option value="income">Entrada</option>
-                <option value="expense">Despesa</option>
+                <option value="Entrada">Entrada</option>
+                <option value="Despesa">Despesa</option>
               </select>
             </>
           )}
@@ -132,8 +153,9 @@ const FinanceForm = ({ financeId = "" }: { financeId?: string }) => {
           render={({ field: { onChange, value, name } }) => (
             <NumericFormat
               name={name}
-              value={value}
+              value={value || ""}
               thousandSeparator="."
+              defaultValue={null}
               decimalSeparator=","
               decimalScale={2}
               fixedDecimalScale={true}
@@ -224,7 +246,14 @@ const FinanceForm = ({ financeId = "" }: { financeId?: string }) => {
         />
       </div>
 
-      <button type="submit">Salvar</button>
+      <div className="flex justify-end pr-8">
+        <button
+          type="submit"
+          className="w-64 rounded-md bg-primary text-white font-semibold px-4 py-2.5 hover:bg-secondary focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary"
+        >
+          Salvar
+        </button>
+      </div>
     </form>
   );
 };

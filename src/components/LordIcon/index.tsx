@@ -36,7 +36,7 @@ export const LordIcon = ({
 }: LordIconProps) => {
   return (
     <lord-icon
-      colors={`primary:${colors?.primary || '#2e008b'},secondary:${colors?.secondary || '#2e008b'}`}
+      colors={`primary:${colors?.primary || '#8975E6'},secondary:${colors?.secondary || '#8975E6'}`}
       src={src}
       trigger={trigger}
       delay={delay}

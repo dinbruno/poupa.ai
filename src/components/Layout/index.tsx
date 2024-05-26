@@ -58,8 +58,6 @@ export default function AdminLayout({
 
   const { user } = useFamily();
 
-  console.log(user);
-
   return (
     <>
       <div>
