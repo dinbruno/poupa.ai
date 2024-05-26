@@ -68,7 +68,7 @@ function DashboardPage() {
             <h2 className="text-2xl font-bold">Family Members</h2>
             <div className="flex -space-x-4 mt-3">
               {familyMembers.map((member: any, index: number) => (
-                <span title={`${member.firstName } ${member.lastName} `}>
+                <span title={`${member.firstName } ${member.lastName} `} key={index}>
                   {member?.profileImageUrl ? (
                     <img
                       key={member.id}
