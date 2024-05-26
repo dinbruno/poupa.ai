@@ -9,9 +9,14 @@ import {
   addDoc,
   arrayUnion,
   collection,
+  deleteDoc,
   doc,
+  getDoc,
+  getDocs,
+  query,
   setDoc,
   updateDoc,
+  where,
 } from "firebase/firestore";
 
 // Registra um novo usuário
@@ -40,7 +45,6 @@ export const registerUser = async (
     familyId: familyDocRef.id,
     familyName: familyName,
   };
-
 
   const userDocRef = doc(db, "users", user.uid);
   await setDoc(userDocRef, userData);
@@ -101,5 +105,71 @@ export const inviteUserToFamily = async (familyId: string, email: string) => {
   } catch (error) {
     console.error("Erro ao criar usuário:", error);
     throw new Error("Falha ao convidar usuário para a família.");
+  }
+};
+
+export const addFinance = async (financeData: any, userId: string) => {
+  const financeCollectionRef = collection(db, "finances");
+  return addDoc(financeCollectionRef, {
+    ...financeData,
+    userId: userId,
+  });
+};
+
+export const updateFinance = (id: string, financeData: any) => {
+  const financeDoc = doc(db, "finances", id);
+  return updateDoc(financeDoc, financeData);
+};
+
+export const deleteFinance = (id: string) => {
+  const financeDoc = doc(db, "finances", id);
+  return deleteDoc(financeDoc);
+};
+
+export const getFinancesByUser = async (userId: string) => {
+  const q = query(collection(db, "finances"), where("userId", "==", userId));
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    type: doc.data().type,
+    value: doc.data().value,
+    name: doc.data().name,
+    area: doc.data().area,
+    description: doc.data().description,
+    isFixedExpense: doc.data().isFixedExpense,
+    userId: doc.data().userId,
+  }));
+};
+
+export const getFamilyFinances = async (familyId: string) => {
+  const q = query(
+    collection(db, "finances"),
+    where("familyId", "==", familyId)
+  );
+  const querySnapshot = await getDocs(q);
+  return querySnapshot.docs.map((doc) => ({
+    id: doc.id,
+    type: doc.data().type,
+    value: doc.data().value,
+    name: doc.data().name,
+    area: doc.data().area,
+    description: doc.data().description,
+    isFixedExpense: doc.data().isFixedExpense,
+    userId: doc.data().userId,
+  }));
+};
+
+export const getFinanceById = async (financeId: string) => {
+  try {
+    const financeRef = doc(db, "finances", financeId);
+    const financeSnap = await getDoc(financeRef);
+    if (financeSnap.exists()) {
+      return { ...financeSnap.data() };
+    } else {
+      throw new Error("Finança não encontrada");
+    }
+  } catch (error) {
+    console.error("Erro ao buscar finança:", error);
+    throw error;
   }
 };

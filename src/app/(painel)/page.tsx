@@ -3,8 +3,7 @@ import Image from "next/image";
 export default function Home() {
   return (
     <div>
-      <h1>Home</h1>
-     testee
+      <div className="grid grid-cols"></div>
     </div>
   );
 }

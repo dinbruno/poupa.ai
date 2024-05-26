@@ -32,7 +32,7 @@ const InputComponent = ({
   return (
     <div className={`${className} w-full`}>
       {label && (
-        <label className={`${!!required && "required"}`}>{label}</label>
+        <label className={`${!!required && "required"} block text-sm font-medium leading-6 text-gray-900`}>{label}</label>
       )}
       <Controller
         name={name}

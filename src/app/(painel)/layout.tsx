@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "../../app/globals.css";
 import { FamilyProvider } from "@/context/FamilyContext";
+import { FinanceProvider } from "@/context/FinanceContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +19,9 @@ export default function PanelLayout({
   return (
     <html lang="en" className="h-full w-full">
       <body className={`h-full`}>
-        <FamilyProvider>{children}</FamilyProvider>
+        <FamilyProvider>
+          <FinanceProvider>{children}</FinanceProvider>
+        </FamilyProvider>
       </body>
     </html>
   );
