@@ -29,7 +29,6 @@ export const registerUser = async (
   password: string,
   familyName: string
 ) => {
-  // Criar usuário com autenticação
   const userCredential = await createUserWithEmailAndPassword(
     auth,
     email,
@@ -45,10 +44,14 @@ export const registerUser = async (
     updatedAt: serverTimestamp(),
   });
 
+  await updateDoc(familyDocRef, {
+    familyId: familyDocRef.id,
+  });
+
   const userData = {
     email: email,
     uid: user.uid,
-    familyId: familyDocRef.id,
+    familyId: familyDocRef.id, 
     familyName: familyName,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp(),
@@ -85,7 +88,7 @@ function generatePassword() {
 }
 
 export const inviteUserToFamily = async (familyId: string, email: string) => {
-  const password = generatePassword(); 
+  const password = generatePassword();
   try {
     const userCredential = await createUserWithEmailAndPassword(
       auth,
@@ -126,7 +129,7 @@ export const addFinance = async (financeData: any, userId: string) => {
   });
 
   await updateDoc(doc(db, "finances", docRef.id), {
-    id: docRef.id
+    id: docRef.id,
   });
 
   return {
@@ -142,7 +145,7 @@ export const updateFinance = (id: string, financeData: any) => {
   const financeDoc = doc(db, "finances", id);
   return updateDoc(financeDoc, {
     ...financeData,
-    updatedAt: serverTimestamp(), // Atualiza a data de modificação
+    updatedAt: serverTimestamp(),
   });
 };
 
@@ -163,7 +166,26 @@ export const getFinancesByUser = async (userId: string) => {
     description: doc.data().description,
     isFixedExpense: doc.data().isFixedExpense,
     userId: doc.data().userId,
+    createdAt: doc.data().createdAt,
+    updatedAt: doc.data().updatedAt,
   }));
+};
+
+export const getFamilyMembers = async (familyId: string) => {
+  const userCollectionRef = collection(db, "users");
+  const q = query(userCollectionRef, where("familyId", "==", familyId));
+
+  try {
+    const querySnapshot = await getDocs(q);
+    const members = querySnapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...doc.data(),
+    }));
+    return members;
+  } catch (error) {
+    console.error("Erro ao buscar membros da família:", error);
+    throw new Error("Falha ao buscar membros da família.");
+  }
 };
 
 export const getFamilyFinances = async (familyId: string) => {

@@ -6,10 +6,12 @@ import AdminLayout from "@/components/Layout";
 
 function Template({ children }: { children: React.ReactNode }) {
   return (
-    <AdminLayout>
-      <Toaster />
-      {children}
-    </AdminLayout>
+    <div className="bg-[#FAFCFF]">
+      <AdminLayout>
+        <Toaster />
+        {children}
+      </AdminLayout>
+    </div>
   );
 }
 

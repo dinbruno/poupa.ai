@@ -1,12 +1,12 @@
-import 'react';
+import "react";
 
 type LordIconTrigger =
-  | 'hover'
-  | 'click'
-  | 'loop'
-  | 'loop-on-hover'
-  | 'morph'
-  | 'morph-two-way';
+  | "hover"
+  | "click"
+  | "loop"
+  | "loop-on-hover"
+  | "morph"
+  | "morph-two-way";
 
 type LordIconProps = {
   src?: string;
@@ -22,10 +22,9 @@ type LordIconElement = React.DetailedHTMLProps<
   LordIconProps;
 
 declare global {
-  // eslint-disable-next-line @typescript-eslint/no-namespace
   namespace JSX {
     interface IntrinsicElements {
-      'lord-icon': LordIconElement;
+      "lord-icon": LordIconElement;
     }
   }
 }

@@ -10,6 +10,7 @@ import React, {
 import { onAuthStateChanged } from "firebase/auth";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from "@/lib/firebaseConfig";
+import { getFamilyMembers } from "@/services/firebaseService";
 
 interface FamilyData {
   familyId: string;
@@ -36,6 +37,7 @@ interface FamilyContextType {
   isLoading: boolean;
   user: UserData;
   updateFamilyData: (data: FamilyData) => Promise<void>;
+  familyMembers: any[];
 }
 
 const FamilyContext = createContext<FamilyContextType | undefined>(undefined);
@@ -60,13 +62,17 @@ export const FamilyProvider: React.FC<{ children: ReactNode }> = ({
     streetAddress: "",
     familyId: "",
   });
+  const [familyMembers, setFamilyMembers] = useState<any[]>([]);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (authUser) => {
       setLoading(true);
       if (authUser) {
         const userData = await fetchUserData(authUser.uid);
-        const familyData = await fetchFamilyData(authUser.uid);
+        const familyData = await fetchFamilyData(userData.familyId);
+        const familyMembersData = await getFamilyMembers(familyData.familyId);
+
+        setFamilyMembers(familyMembersData);
         setUser(userData);
         setFamilyData(familyData);
       } else {
@@ -111,9 +117,7 @@ export const FamilyProvider: React.FC<{ children: ReactNode }> = ({
   const fetchFamilyData = async (uid: string): Promise<FamilyData> => {
     const familyDocRef = doc(db, "families", uid);
     const docSnap = await getDoc(familyDocRef);
-    return docSnap.exists()
-      ? (docSnap.data() as FamilyData)
-      : { familyId: "", members: [], admin: uid };
+    return docSnap.data() as FamilyData;
   };
 
   const updateFamilyData = async (data: FamilyData) => {
@@ -129,7 +133,7 @@ export const FamilyProvider: React.FC<{ children: ReactNode }> = ({
 
   return (
     <FamilyContext.Provider
-      value={{ familyData, isLoading, user, updateFamilyData }}
+      value={{ familyData, isLoading, user, familyMembers, updateFamilyData }}
     >
       {children}
     </FamilyContext.Provider>
