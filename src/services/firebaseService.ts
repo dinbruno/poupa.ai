@@ -303,27 +303,32 @@ export const getFinancesByUserWithDataFilter = async (
 export const getFinancesByUserWithFilter = async (
   userId: string,
   start: Date,
-  end: Date
+  end: Date,
+  includeFixed: boolean = false
 ) => {
   const financeCollectionRef = collection(db, "finances");
-  const q1 = query(
-    financeCollectionRef,
-    where("userId", "==", userId),
-    where("createdAt", ">=", start),
-    where("createdAt", "<=", end)
-  );
+  let queries = [
+    query(
+      financeCollectionRef,
+      where("userId", "==", userId),
+      where("createdAt", ">=", start),
+      where("createdAt", "<=", end)
+    )
+  ];
 
-  const q2 = query(
-    financeCollectionRef,
-    where("userId", "==", userId),
-    where("isFixedExpense", "==", true)
-  );
+  if (includeFixed) {
+    queries.push(query(financeCollectionRef, where("userId", "==", userId), where("isFixedExpense", "==", true)));
+  }
 
-  const [snapshot1, snapshot2] = await Promise.all([getDocs(q1), getDocs(q2)]);
+  const snapshots = await Promise.all(queries.map(getDocs));
   const finances = new Map();
 
-  snapshot1.docs.forEach((doc) => finances.set(doc.id, doc.data()));
-  snapshot2.docs.forEach((doc) => finances.set(doc.id, doc.data()));
+  snapshots.forEach(snapshot => {
+    snapshot.docs.forEach(doc => {
+      finances.set(doc.id, {...doc.data(), id: doc.id});
+    });
+  });
 
   return Array.from(finances.values());
 };
+

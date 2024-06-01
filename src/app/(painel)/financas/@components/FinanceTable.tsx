@@ -64,13 +64,17 @@ export default function FinancasComponent() {
 
   const getAllFinances = async () => {
     try {
-      const financesData = await getFinancesByUserWithFilter(
-        user.uid,
-        new Date(new Date().getFullYear(), selectedMonth, 1),
-        new Date(new Date().getFullYear(), selectedMonth + 1, 0, 23, 59, 59)
-      );
-      setFinances(financesData);
-      setTotalPages(Math.ceil(financesData.length / ITEMS_PER_PAGE));
+      const monthStart = new Date(new Date().getFullYear(), selectedMonth, 1);
+      const monthEnd = new Date(new Date().getFullYear(), selectedMonth + 1, 0, 23, 59, 59);
+  
+      const allFinances = await getFinancesByUserWithFilter(user.uid, monthStart, monthEnd);
+      const fixedExpenses = await getFinancesByUserWithFilter(user.uid, new Date(1970, 0, 1), new Date(2099, 11, 31), true);
+      
+      // Combine and remove duplicates (if fixed expenses are fetched twice)
+      const combinedFinances = [...allFinances, ...fixedExpenses.filter(fe => !allFinances.some(f => f.id === fe.id))];
+  
+      setFinances(combinedFinances);
+      setTotalPages(Math.ceil(combinedFinances.length / ITEMS_PER_PAGE));
     } catch (error) {
       console.error("Erro ao buscar finanças:", error);
     }
@@ -157,7 +161,7 @@ export default function FinancasComponent() {
 
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900 text-primary">
+          <h1 className="text-base font-semibold leading-6 text-primary">
             Finanças
           </h1>
           <p className="mt-2 text-sm text-gray-700">

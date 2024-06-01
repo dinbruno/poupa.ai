@@ -25,6 +25,7 @@ const schema = yup
     area: yup.string().required("Área é obrigatória"),
     description: yup.string().required("Descrição é obrigatória"),
     isFixedExpense: yup.boolean(),
+    DataEntrada: yup.number()
   })
   .required();
 
@@ -58,28 +59,28 @@ const FinanceForm = ({
       area: "",
       description: "",
       isFixedExpense: false,
+      DataEntrada: new Date().getMonth() + 1,
+
     },
   });
 
   const type = watch("type");
 
   const onSubmit = async (data: any) => {
+    const dataToSave = {
+      ...data,
+      userId: user.uid,
+      DataEntrada: data.DataEntrada || selectedMonth,
+    };
+
     if (financeId) {
-      await updateFinance(financeId, data);
+      await updateFinance(financeId, dataToSave);
     } else {
-      await addFinance(data, user.uid);
+      await addFinance(dataToSave, user.uid);
     }
     await getAllFinances();
     handleModal("");
-    toast.success("Operação financeira salva com sucesso!", {
-      position: "top-right",
-      style: {
-        width: "400px",
-        accentColor: "#333",
-        backgroundColor: "#f4f4f4",
-        color: "#333",
-      },
-    });
+    toast.success("Operação financeira salva com sucesso!");
   };
 
   useEffect(() => {
