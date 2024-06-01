@@ -50,10 +50,10 @@ function DashboardPage() {
   return (
     <div className="">
       <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
-        <div className="col-span-1 sm:col-span-4 sm:grid grid-cols-3 gap-y-4 justify-center">
-          <Card title="Total Income" value={`$${totalIncome}`} />
-          <Card title="Total Expenses" value={`$${totalExpenses}`} />
-          <Card title="Balance" value={`$${balance}`} />
+        <div className="col-span-1 sm:col-span-4 sm:grid grid-cols-3 gap-4 justify-center">
+          <Card title="Total Income" value={`$${totalIncome}`} icon="cash"/>
+          <Card title="Total Expenses" value={`$${totalExpenses}`} icon="cash"/>
+          <Card title="Balance" value={`$${balance}`} icon="chart"/>
           <div className="bg-white w-full col-span-1 sm:col-span-3 rounded-md shadow ">
             <MixedBarChart data={finances} />
           </div>

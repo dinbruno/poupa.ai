@@ -33,11 +33,12 @@ import Image from "next/image";
 import { logoutUser } from "@/services/firebaseService";
 import { useFamily } from "@/context/FamilyContext";
 import { PuffLoader } from "react-spinners";
+import { usePathname, useRouter } from "next/navigation";
 
 const navigation = [
   { name: "Home", href: "/", icon: HomeIcon, current: true },
   { name: "Finanças", href: "/financas", icon: BanknotesIcon, current: false },
-  { name: "Reports", href: "#", icon: ChartPieIcon, current: false },
+  { name: "Reports", href: "/reports", icon: ChartPieIcon, current: false },
 ];
 
 const userNavigation = [
@@ -56,11 +57,17 @@ export default function AdminLayout({
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
+  const pathname = usePathname()
+
   const { user } = useFamily();
+
+  navigation.forEach((item) => {
+    item.current = pathname === item.href;
+  });
 
   return (
     <>
-      <div>
+      <div className="h-full">
         <Transition show={sidebarOpen}>
           <Dialog className="relative z-50 lg:hidden" onClose={setSidebarOpen}>
             <TransitionChild

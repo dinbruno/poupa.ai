@@ -181,16 +181,48 @@ const FinanceForm = ({
         )}
       </div>
 
-      <InputComponent
-        inputMode="text"
-        type="text"
-        control={control}
-        name="area"
-        className="col-span-3"
-        label="Area"
-        error={errors.area}
-        placeholder="Insira a área da operação financeira"
-      />
+      <div className="col-span-3">
+        <Controller
+          name="area"
+          control={control}
+          render={({ field: { onChange, onBlur, value, name, ref } }) => (
+            <>
+              <label
+                htmlFor="location"
+                className="block text-sm font-medium leading-6 text-gray-900"
+              >
+                Tipo de operação
+              </label>
+              <select
+                name={name}
+                ref={ref}
+                onChange={onChange}
+                onBlur={onBlur}
+                className="block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6"
+              >
+                {type === "Entrada" ? (
+                  <>
+                    <option value="Salário">Salário</option>
+                    <option value="Investimento">Investimento</option>
+                    <option value="Outros">Outros</option>
+                  </>
+                ) : (
+                  <>
+                    <option value="Alimentação">Alimentação</option>
+                    <option value="Educação">Educação</option>
+                    <option value="Lazer">Lazer</option>
+                    <option value="Moradia">Moradia</option>
+                    <option value="Saúde">Saúde</option>
+                    <option value="Transporte">Transporte</option>
+                    <option value="Transporte">Supermercado</option>
+                    <option value="Outros">Outros</option>
+                  </>
+                )}
+              </select>
+            </>
+          )}
+        />
+      </div>
 
       <div className="col-span-5">
         <Controller

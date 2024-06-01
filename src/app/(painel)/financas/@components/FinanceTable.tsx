@@ -143,7 +143,7 @@ export default function FinancasComponent() {
   }, [selectedMonth]);
 
   return (
-    <div className="">
+    <div className="px-2 sm:px-0">
       <Modal open={open} setOpen={setOpen}>
         <FinanceForm
           financeId={editingFinanceId}
@@ -157,18 +157,18 @@ export default function FinancasComponent() {
 
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
-          <h1 className="text-base font-semibold leading-6 text-gray-900">
-            Users
+          <h1 className="text-base font-semibold leading-6 text-gray-900 text-primary">
+            Finanças
           </h1>
           <p className="mt-2 text-sm text-gray-700">
-            A list of all the users in your account including their name, title,
-            email and role.
+            Acompanhe suas finanças e mantenha o controle de seus gastos e
+            rendimentos.
           </p>
         </div>
       </div>
-      <TabPanel />
+      {/* <TabPanel /> */}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 py-4 sm:py-8">
         <div className="bg-white rounded-lg shadow p-4 flex items-center space-x-3">
           <LordIcon
             src="https://cdn.lordicon.com/bhjlwchu.json"
@@ -178,10 +178,17 @@ export default function FinancasComponent() {
 
           <div>
             <div className="text-sm font-medium text-gray-500">Entradas</div>
-            <div className="text-lg font-semibold">R$ {income.toFixed(2)}</div>
-            <div className="text-sm font-medium text-green-600 flex items-center">
-              <ArrowUpCircleIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-              {income}%
+            <div className="flex gap-5">
+              <div className="text-lg font-semibold">
+                R$ {income.toFixed(2)}
+              </div>
+              <div className="text-sm font-medium text-green-600 flex items-center">
+                <ArrowUpCircleIcon
+                  className="h-5 w-5 mr-1"
+                  aria-hidden="true"
+                />
+                {income}%
+              </div>
             </div>
           </div>
         </div>
@@ -194,15 +201,17 @@ export default function FinancasComponent() {
           />
           <div>
             <div className="text-sm font-medium text-gray-500">Saídas</div>
-            <div className="text-lg font-semibold">
-              R$ {expenses.toFixed(2)}
-            </div>
-            <div className="text-sm font-medium text-red-600 flex items-center absolute">
-              <ArrowDownCircleIcon
-                className="h-5 w-5 mr-1"
-                aria-hidden="true"
-              />
-              {expenses}%
+            <div className="flex gap-5">
+              <div className="text-lg font-semibold">
+                R$ {expenses.toFixed(2)}
+              </div>
+              <div className="text-sm font-medium text-red-600 flex items-center">
+                <ArrowDownCircleIcon
+                  className="h-5 w-5 mr-1"
+                  aria-hidden="true"
+                />
+                {expenses}%
+              </div>
             </div>
           </div>
         </div>
@@ -215,23 +224,27 @@ export default function FinancasComponent() {
           />
           <div>
             <div className="text-sm font-medium text-gray-500">Saldo</div>
-            <div className="text-lg font-semibold">R$ {balance.toFixed(2)}</div>
-            <div className="text-sm font-medium text-blue-600">
-              {/* Condicional para mostrar seta para cima ou para baixo baseado no saldo */}
-              {balance > 0 ? (
-                <div className="flex items-center">
-                  <ArrowUpIcon className="h-5 w-5 mr-1" aria-hidden="true" />
-                  Ascendente
-                </div>
-              ) : (
-                <div className="flex items-center">
-                  <ArrowDownCircleIcon
-                    className="h-5 w-5 mr-1"
-                    aria-hidden="true"
-                  />
-                  Decrescente
-                </div>
-              )}
+            <div className="flex gap-5">
+              <div className="text-lg font-semibold">
+                R$ {balance.toFixed(2)}
+              </div>
+              <div className="text-sm font-medium ">
+                {/* Condicional para mostrar seta para cima ou para baixo baseado no saldo */}
+                {balance > 0 ? (
+                  <div className="flex items-center text-green-500">
+                    <ArrowUpIcon className="h-5 w-5 mr-1" aria-hidden="true" />
+                    Ascendente
+                  </div>
+                ) : (
+                  <div className="flex items-center text-orange-400">
+                    <ArrowDownCircleIcon
+                      className="h-5 w-5 mr-1"
+                      aria-hidden="true"
+                    />
+                    Descendente
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         </div>
@@ -264,8 +277,8 @@ export default function FinancasComponent() {
 
       <div className="">
         <div className="mt-8 flow-root">
-          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+          <div className="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8 px-4">
+            <div className="inline-block min-w-full py-2 align-middle sm:px-4">
               <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
                 <table className="min-w-full divide-y divide-gray-300">
                   <thead className="bg-gray-50">
@@ -356,13 +369,13 @@ export default function FinancasComponent() {
                       href="#"
                       className="relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                     >
-                      Previous
+                      Anterior
                     </a>
                     <a
                       href="#"
                       className="relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
                     >
-                      Next
+                      Próximo
                     </a>
                   </div>
                   <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
@@ -385,7 +398,7 @@ export default function FinancasComponent() {
                           onClick={() => setCurrentPage(currentPage - 1)}
                           className="relative inline-flex items-center rounded-l-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
                         >
-                          <span className="sr-only">Previous</span>
+                          <span className="sr-only">Anterior</span>
                           <ChevronLeftIcon
                             className="h-5 w-5"
                             aria-hidden="true"
@@ -412,7 +425,7 @@ export default function FinancasComponent() {
                           disabled={currentPage === totalPages}
                           className="relative inline-flex items-center rounded-r-md px-2 py-2 text-gray-400 ring-1 ring-inset ring-gray-300 hover:bg-gray-50 focus:z-20 focus:outline-offset-0"
                         >
-                          <span className="sr-only">Next</span>
+                          <span className="sr-only">Próximo</span>
                           <ChevronRightIcon
                             className="h-5 w-5"
                             aria-hidden="true"
