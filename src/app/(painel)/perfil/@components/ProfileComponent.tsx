@@ -175,7 +175,7 @@ const ProfileForm: React.FC = () => {
                   <InputComponent
                     inputMode="text"
                     type="text"
-                    className="col-span-3"
+                    className="col-span-6 sm:col-span-3"
                     control={control}
                     name="firstName"
                     label="Nome"
@@ -185,7 +185,7 @@ const ProfileForm: React.FC = () => {
                   <InputComponent
                     inputMode="text"
                     type="text"
-                    className="col-span-3"
+                    className="col-span-6 sm:col-span-3"
                     control={control}
                     name="lastName"
                     label="Sobrenome"
@@ -195,7 +195,7 @@ const ProfileForm: React.FC = () => {
                   <InputComponent
                     inputMode="text"
                     type="text"
-                    className="col-span-4"
+                    className="col-span-6 sm:col-span-4"
                     label="Email"
                     disabled
                     control={control}
@@ -203,13 +203,13 @@ const ProfileForm: React.FC = () => {
                     error={errors.email}
                     placeholder="Enter your email address"
                   />
-                  <div className="col-span-2"></div>
+                  <div className="hidden sm:block col-span-2"></div>
                   <InputComponent
                     inputMode="text"
                     type="text"
                     control={control}
                     name="streetAddress"
-                    className="col-span-2"
+                    className="col-span-6 sm:col-span-2"
                     label="Endereço"
                     error={errors.streetAddress}
                     placeholder="Enter your street address"
@@ -219,7 +219,7 @@ const ProfileForm: React.FC = () => {
                     type="text"
                     control={control}
                     name="city"
-                    className="col-span-2"
+                    className="col-span-6 sm:col-span-2"
                     label="City"
                     error={errors.city}
                     placeholder="Enter your city"
@@ -230,12 +230,12 @@ const ProfileForm: React.FC = () => {
                     control={control}
                     name="region"
                     label="Estado"
-                    className="col-span-2"
+                    className="col-span-6 sm:col-span-2"
                     error={errors.region}
                     placeholder="Enter your state or province"
                   />
 
-                  <div className="col-span-full">
+                  <div className="col-span-6 sm:col-span-full">
                     <label
                       htmlFor="about"
                       className="block text-sm font-medium leading-6 text-gray-900"
@@ -256,7 +256,7 @@ const ProfileForm: React.FC = () => {
                     </p>
                   </div>
 
-                  <div className="col-span-full">
+                  <div className="col-span-6 sm:col-span-full">
                     <label
                       htmlFor="photo"
                       className="block text-sm font-medium leading-6 text-gray-900"
@@ -304,7 +304,7 @@ const ProfileForm: React.FC = () => {
                     </div>
                   </div>
 
-                  <div className="col-span-full">
+                  <div className="col-span-6 sm:col-span-full">
                     <label
                       htmlFor="cover-photo"
                       className="block text-sm font-medium leading-6 text-gray-900"

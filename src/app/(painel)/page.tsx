@@ -11,6 +11,8 @@ import TransactionsTable from "./@components/TransactionTable";
 import Card from "./@components/Card";
 import { useFamily } from "@/context/FamilyContext";
 import { UserIcon } from "@heroicons/react/24/outline";
+import LoadingComponent from "@/components/LoadingComponent";
+import { PuffLoader } from "react-spinners";
 
 function DashboardPage() {
   const [finances, setFinances] = useState<any[]>([]);
@@ -35,7 +37,9 @@ function DashboardPage() {
     fetchData();
   }, []);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) return <div className="flex justify-center items-center h-screen">
+    <PuffLoader color="blue"/>
+  </div>;
 
   const totalIncome = finances.reduce(
     (acc, curr: any) => (curr.type === "Entrada" ? acc + curr.value : acc),
@@ -50,10 +54,10 @@ function DashboardPage() {
   return (
     <div className="">
       <div className="grid grid-cols-1 sm:grid-cols-6 gap-4">
-        <div className="col-span-1 sm:col-span-4 sm:grid grid-cols-3 gap-4 justify-center">
-          <Card title="Total Income" value={`$${totalIncome}`} icon="cash"/>
-          <Card title="Total Expenses" value={`$${totalExpenses}`} icon="cash"/>
-          <Card title="Balance" value={`$${balance}`} icon="chart"/>
+        <div className="col-span-1 sm:col-span-4 sm:grid sm:grid-cols-3 gap-4 justify-center gap-y-4 grid-cols-1">
+          <Card title="Total de Entradas" value={`R$${totalIncome}`} icon="cash"/>
+          <Card title="Total de Despesas" value={`R$${totalExpenses}`} icon="cash"/>
+          <Card title="Saldo" value={`R$${balance}`} icon="chart"/>
           <div className="bg-white w-full col-span-1 sm:col-span-3 rounded-md shadow ">
             <MixedBarChart data={finances} />
           </div>

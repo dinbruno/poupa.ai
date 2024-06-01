@@ -71,7 +71,7 @@ const TransactionsTable: React.FC<TransactionsTableProps> = ({
               <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                 {transaction.type}
               </td>
-              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{`$${transaction.value}`}</td>
+              <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">{`R$${transaction.value}`}</td>
             </tr>
           ))}
         </tbody>
